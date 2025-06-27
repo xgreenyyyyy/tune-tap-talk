@@ -117,7 +117,7 @@ const FormCard = () => {
       <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-gray/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-light-gray mb-2">Share Your Music</h1>
-          <p className="text-light-gray/70">Tell us about a song you love</p>
+          <p className="text-light-gray/70">And see what happens next.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
