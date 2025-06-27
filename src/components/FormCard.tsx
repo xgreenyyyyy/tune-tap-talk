@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Music, User, ExternalLink, CheckCircle } from 'lucide-react';
+import { User, ExternalLink, CheckCircle } from 'lucide-react';
 import InputField from './InputField';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -117,9 +116,6 @@ const FormCard = () => {
     <div className="w-full max-w-md mx-auto">
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mb-4">
-            <Music className="w-8 h-8 text-white" />
-          </div>
           <h1 className="text-3xl font-bold text-white mb-2">Share Your Music</h1>
           <p className="text-gray-300">Tell us about a song you love</p>
         </div>
@@ -135,7 +131,7 @@ const FormCard = () => {
           />
 
           <InputField
-            icon={Music}
+            icon={User}
             label="Song Name"
             placeholder="Enter the song title"
             value={formData.songName}
