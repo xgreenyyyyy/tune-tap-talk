@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Music, User, ExternalLink, CheckCircle } from 'lucide-react';
 import InputField from './InputField';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const FormCard = () => {
   const [formData, setFormData] = useState({
@@ -54,12 +55,33 @@ const FormCard = () => {
       return;
     }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Save to Supabase
+      const { error } = await supabase
+        .from('music_submissions')
+        .insert([
+          {
+            name: formData.name.trim(),
+            song_name: formData.songName.trim(),
+            spotify_link: formData.spotifyLink.trim()
+          }
+        ]);
 
-    setIsSubmitted(true);
-    toast.success('Your music submission has been received!');
-    setIsSubmitting(false);
+      if (error) {
+        console.error('Error saving submission:', error);
+        toast.error('Failed to save your submission. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      setIsSubmitted(true);
+      toast.success('Your music submission has been saved!');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -72,16 +94,16 @@ const FormCard = () => {
       <div className="w-full max-w-md mx-auto">
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl animate-scale-in">
           <div className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mb-6 animate-bounce">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-4">Thank You!</h2>
             <p className="text-gray-300 mb-6">
-              Your music submission has been received. We'll check out your song recommendation!
+              Your music submission has been saved to our database. We'll check out your song recommendation!
             </p>
             <button
               onClick={resetForm}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-full font-medium hover:from-blue-600 hover:to-blue-800 transition-all duration-300 transform hover:scale-105"
             >
               Submit Another Song
             </button>
@@ -95,7 +117,7 @@ const FormCard = () => {
     <div className="w-full max-w-md mx-auto">
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mb-4">
             <Music className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Share Your Music</h1>
@@ -134,7 +156,7 @@ const FormCard = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 rounded-2xl font-semibold text-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-2xl font-semibold text-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
