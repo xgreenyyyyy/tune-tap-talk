@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User, ExternalLink, CheckCircle } from 'lucide-react';
 import InputField from './InputField';
@@ -10,7 +11,10 @@ const FormCard = () => {
     songName: '',
     spotifyLink: ''
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(() => {
+    // Check if user has already submitted
+    return localStorage.getItem('hasSubmitted') === 'true';
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
@@ -28,6 +32,13 @@ const FormCard = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Check if already submitted
+    if (localStorage.getItem('hasSubmitted') === 'true') {
+      toast.error('You have already submitted a song');
+      setIsSubmitting(false);
+      return;
+    }
 
     // Validation
     if (!formData.name.trim()) {
@@ -73,6 +84,8 @@ const FormCard = () => {
         return;
       }
 
+      // Mark as submitted in localStorage
+      localStorage.setItem('hasSubmitted', 'true');
       setIsSubmitted(true);
       toast.success('Your music submission has been saved!');
     } catch (error) {
@@ -83,29 +96,21 @@ const FormCard = () => {
     }
   };
 
-  const resetForm = () => {
-    setFormData({ name: '', songName: '', spotifyLink: '' });
-    setIsSubmitted(false);
-  };
-
   if (isSubmitted) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-gray/20 rounded-3xl p-8 shadow-2xl animate-scale-in">
+        <div className="backdrop-blur-xl bg-gray-900/80 border border-blue-500/20 rounded-3xl p-8 shadow-2xl animate-scale-in">
           <div className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-light-cyan to-lavender rounded-full flex items-center justify-center mb-6 animate-bounce">
-              <CheckCircle className="w-8 h-8 text-slate-gray" />
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center mb-6 animate-bounce">
+              <CheckCircle className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-light-gray mb-4">Thank You!</h2>
-            <p className="text-light-gray/80 mb-6">
+            <h2 className="text-2xl font-bold text-white mb-4">Thank You!</h2>
+            <p className="text-white/80 mb-6">
               Your music submission has been saved to our database. We'll check out your song recommendation!
             </p>
-            <button
-              onClick={resetForm}
-              className="bg-gradient-to-r from-lavender to-soft-pink text-slate-gray px-6 py-3 rounded-full font-medium hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105"
-            >
-              Submit Another Song
-            </button>
+            <p className="text-blue-400 text-sm">
+              You can only submit one song per session.
+            </p>
           </div>
         </div>
       </div>
@@ -114,10 +119,10 @@ const FormCard = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-gray/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
+      <div className="backdrop-blur-xl bg-gray-900/80 border border-blue-500/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-light-gray mb-2">Share Your Music</h1>
-          <p className="text-light-gray/70">And see what happens next!</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Share Your Music</h1>
+          <p className="text-white/70">And see what happens next!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -152,11 +157,11 @@ const FormCard = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-lavender to-soft-pink text-slate-gray py-4 rounded-2xl font-semibold text-lg hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-gray mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                 Submitting...
               </div>
             ) : (
