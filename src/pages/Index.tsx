@@ -18,7 +18,6 @@ const Index = () => {
       {/* Footer */}
       <div className="fixed bottom-6 left-0 right-0 text-center">
         <p className="text-light-gray/70 text-sm">
-          Share your favorite tracks and discover new music
         </p>
       </div>
     </div>
