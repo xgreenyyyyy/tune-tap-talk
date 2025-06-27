@@ -91,18 +91,18 @@ const FormCard = () => {
   if (isSubmitted) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl animate-scale-in">
+        <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-gray/20 rounded-3xl p-8 shadow-2xl animate-scale-in">
           <div className="text-center">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center mb-6 animate-bounce">
-              <CheckCircle className="w-8 h-8 text-white" />
+            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-light-cyan to-lavender rounded-full flex items-center justify-center mb-6 animate-bounce">
+              <CheckCircle className="w-8 h-8 text-slate-gray" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-4">Thank You!</h2>
-            <p className="text-gray-300 mb-6">
+            <h2 className="text-2xl font-bold text-light-gray mb-4">Thank You!</h2>
+            <p className="text-light-gray/80 mb-6">
               Your music submission has been saved to our database. We'll check out your song recommendation!
             </p>
             <button
               onClick={resetForm}
-              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-3 rounded-full font-medium hover:from-blue-600 hover:to-blue-800 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-lavender to-soft-pink text-slate-gray px-6 py-3 rounded-full font-medium hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105"
             >
               Submit Another Song
             </button>
@@ -114,10 +114,10 @@ const FormCard = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
+      <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-gray/20 rounded-3xl p-8 shadow-2xl animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Share Your Music</h1>
-          <p className="text-gray-300">Tell us about a song you love</p>
+          <h1 className="text-3xl font-bold text-light-gray mb-2">Share Your Music</h1>
+          <p className="text-light-gray/70">Tell us about a song you love</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -152,11 +152,11 @@ const FormCard = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-2xl font-semibold text-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="w-full bg-gradient-to-r from-lavender to-soft-pink text-slate-gray py-4 rounded-2xl font-semibold text-lg hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-gray mr-2"></div>
                 Submitting...
               </div>
             ) : (

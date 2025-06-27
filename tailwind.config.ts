@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -62,7 +64,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Custom palette colors
+				'slate-gray': '#2C2C2C',
+				'light-gray': '#E4E4E4',
+				'light-cyan': '#A8DADC',
+				'soft-pink': '#FFC1CC',
+				'lavender': '#B39CD0'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
