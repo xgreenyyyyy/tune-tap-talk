@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { DivideIcon as LucideIcon } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface InputFieldProps {
   icon: LucideIcon;

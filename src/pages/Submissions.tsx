@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, ExternalLink, Calendar, User, Music } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { ExternalLink, Music, User, Calendar, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface Submission {
@@ -13,24 +14,26 @@ interface Submission {
 }
 
 const Submissions = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem('submissions_authenticated') === 'true';
+  });
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'gee10jali') {
       setIsAuthenticated(true);
-      fetchSubmissions();
+      sessionStorage.setItem('submissions_authenticated', 'true');
+      toast.success('Access granted!');
     } else {
       toast.error('Incorrect password');
     }
   };
 
   const fetchSubmissions = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('music_submissions')
@@ -40,69 +43,65 @@ const Submissions = () => {
       if (error) {
         console.error('Error fetching submissions:', error);
         toast.error('Failed to load submissions');
-        return;
+      } else {
+        setSubmissions(data || []);
       }
-
-      setSubmissions(data || []);
     } catch (error) {
       console.error('Unexpected error:', error);
       toast.error('An unexpected error occurred');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSubmissions();
+    }
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-blue-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md mx-auto">
-          <div className="backdrop-blur-xl bg-gray-900/80 border border-blue-500/20 rounded-3xl p-8 shadow-2xl">
+      <div className="min-h-screen bg-gradient-to-br from-slate-gray via-slate-gray to-slate-gray/90 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="backdrop-blur-xl bg-slate-gray/80 border border-light-cyan/20 rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-2">Access Submissions</h1>
-              <p className="text-white/70">Enter password to view submissions</p>
+              <h1 className="text-3xl font-bold text-light-gray mb-2">Access Required</h1>
+              <p className="text-light-gray/70">Enter password to view submissions</p>
             </div>
 
             <form onSubmit={handlePasswordSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-white/80">
-                  Password <span className="text-blue-400">*</span>
+                <label className="block text-sm font-medium text-light-gray/80">
+                  Password
                 </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password"
-                    required
-                    className="w-full px-4 py-4 bg-gray-800/50 border border-blue-500/20 rounded-2xl text-white placeholder-white/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 hover:bg-gray-800/70"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/60 hover:text-white transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password"
+                  className="w-full px-4 py-4 bg-slate-gray/50 border border-light-gray/20 rounded-2xl text-light-gray placeholder-light-gray/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-light-cyan/50 focus:border-light-cyan/50"
+                  required
+                />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-lavender to-soft-pink text-slate-gray py-4 rounded-2xl font-semibold text-lg hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105"
               >
                 Access Submissions
               </button>
             </form>
+
+            <div className="mt-6 text-center">
+              <Link 
+                to="/" 
+                className="text-light-cyan hover:text-light-cyan/80 text-sm flex items-center justify-center gap-2 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -110,57 +109,89 @@ const Submissions = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-blue-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-gray via-slate-gray to-slate-gray/90 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Music Submissions</h1>
-          <p className="text-white/70">All submitted songs and recommendations</p>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-light-gray mb-2">Music Submissions</h1>
+            <p className="text-light-gray/70">
+              {submissions.length} song{submissions.length !== 1 ? 's' : ''} submitted
+            </p>
+          </div>
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 bg-slate-gray/80 hover:bg-slate-gray/90 text-light-gray px-4 py-2 rounded-lg border border-light-cyan/20 backdrop-blur-xl transition-all duration-300 hover:scale-105"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Back to Home</span>
+          </Link>
         </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-          </div>
-        ) : submissions.length === 0 ? (
-          <div className="text-center py-12">
-            <Music className="w-16 h-16 text-white/30 mx-auto mb-4" />
-            <p className="text-white/60 text-lg">No submissions yet</p>
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-light-cyan"></div>
           </div>
         ) : (
+          /* Submissions Grid */
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {submissions.map((submission) => (
-              <div
+              <div 
                 key={submission.id}
-                className="backdrop-blur-xl bg-gray-900/80 border border-blue-500/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="backdrop-blur-xl bg-slate-gray/60 border border-light-cyan/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
-                <div className="space-y-4">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-blue-400" />
-                    <span className="text-white font-semibold">{submission.name}</span>
+                    <div className="w-10 h-10 bg-gradient-to-r from-lavender to-soft-pink rounded-full flex items-center justify-center">
+                      <Music className="w-5 h-5 text-slate-gray" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-light-gray text-lg">{submission.song_name}</h3>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Music className="w-5 h-5 text-blue-400" />
-                    <span className="text-white">{submission.song_name}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-white/60" />
-                    <span className="text-white/60 text-sm">{formatDate(submission.created_at)}</span>
-                  </div>
-                  
-                  <a
-                    href={submission.spotify_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-xl font-medium hover:from-green-700 hover:to-green-800 transition-all duration-300 transform hover:scale-105"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>Open in Spotify</span>
-                  </a>
                 </div>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center space-x-2 text-light-gray/80">
+                    <User className="w-4 h-4 text-light-cyan" />
+                    <span className="text-sm">{submission.name}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 text-light-gray/80">
+                    <Calendar className="w-4 h-4 text-light-cyan" />
+                    <span className="text-sm">
+                      {new Date(submission.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                <a
+                  href={submission.spotify_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-lavender to-soft-pink text-slate-gray px-4 py-2 rounded-lg font-medium hover:from-lavender/90 hover:to-soft-pink/90 transition-all duration-300 transform hover:scale-105"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Listen on Spotify</span>
+                </a>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && submissions.length === 0 && (
+          <div className="text-center py-12">
+            <Music className="w-16 h-16 text-light-gray/50 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-light-gray mb-2">No submissions yet</h2>
+            <p className="text-light-gray/70">Submissions will appear here once people start sharing their music.</p>
           </div>
         )}
       </div>
